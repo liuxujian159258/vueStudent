@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="../js/vue.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        .active {
+            color: red;
+        }
+        .f-infoTitle {
+            font-size: 14px;
+            color: #333333;
+            font-weight: normal;
+            line-height: 14px;
+            border-left: 3px solid #108ee9;
+            padding-left: 10px;
+            margin: 28px 0 20px;
+        }
+    </style>
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+    <h1>{{myNames}}</h1>
+    <h3 class="f-infoTitle">添加仓单申请</h3>
+    <h3 v-cloak>{{message}}</h3>
+    <h3 v-pre>{{message}}</h3>
+    <h3 v-html="url"></h3>
+    <h3 v-text="message">, 刘绪俭</h3>
+    <h3 v-once>{{message}}</h3>
+    <h3>{{message}}, 刘绪俭</h3>
+    <!-- 变量与简单表达式 -->
+    <h3>{{firstName + lastName}}</h3>
+    <h3>{{firstName + ' ' + lastName}}</h3>
+    <h3>{{firstName}} {{lastName}}</h3>
+    <h3>{{counter * 2}}</h3>
+<!--
+    <h3 v-bind:class="{类名1:true, 类名2: true}"></h3>
+-->
+    <h3 class="title" v-bind:class="{active: isActive, line: isLine}">{{message}}</h3>
+    <h3 class="title" v-bind:class="getClasses()">{{message}}</h3>
+    <h3 class="title" v-bind:class="[class1,class2]">{{message}}</h3>
+    <button v-on:click="btnClick">按钮</button>
+    <!--<h3 :style="{key(属性名): value(属性值)}"></h3>-->
+    <!-- 50px必须加上单引号，否则将当作一个变量进行解析 -->
+    <h3 :style="{fontSize: '50px'}">{{message}}</h3>
+    <h3 :style="{fontSize: finalSize}">{{message}}</h3>
+    <!-- 进行简单的拼接 -->
+    <h3 :style="{fontSize: finalSize + 'px', background: finalColor}">{{message}}</h3>
+    <h3 :style="getStyles()">{{message}}</h3>
+    <h3 :style="[ baseStyle, baseStyle1 ]">{{message}}</h3>
+    <h3>{{fullName}}</h3>
+    <h3>{{totalPrice}}</h3>
+    <h3 v-if="isShow">isShow为true时显示</h3>
+    <h3 v-else>isShow为false时显示</h3>
+    <span v-if="isShow">
+        <label for="username">用户账号</label>
+        <input type="text" id="username" placeholder="用户账号" key="username">
+    </span>
+    <span v-else>
+        <label for="email">用户邮箱</label>
+        <input type="text" id="email" placeholder="用户邮箱" key="email">
+    </span>
+    <!-- v-if: 当条件为false时，包含的元素不会生成在dom中 -->
+    <!-- v-show: 当条件为false，给元素行内样式：display:none -->
+    <h3 v-show="isShow">{{message}}</h3>
+    <button @click="isShow = !isShow">点击切换</button>
+    <ul>
+        <li v-for="(item, index) in names" :key="index">
+            {{index}}  {{item}}
+        </li>
+    </ul>
+    <button @click="clickBtn2">点击数组发生变化</button>
+    <input type="text" :value="message" @input="valueChange">
+    <input type="text" :value="message" @input="message = $event.target.value">
+    <h3>{{message}}</h3>
+    <cpn ref="aaa"></cpn>
+    <cpn ref="bbb"></cpn>
+    <cpn ref="ccc"></cpn>
+    <button @click="myclick">点击</button>
+</div>
+</body>
+<!-- template标签 -->
+<template id="cpn">
+    <div>
+       <h3>我是子组件</h3>
+        <ccpn></ccpn>
+    </div>
+</template>
+<!-- template标签 -->
+<template id="ccpn">
+    <div>
+        <h3>我是子子组件</h3>
+        <button @click="ccpnClick">访问父组件</button>
+    </div>
+</template>
+
+<script>
+    // 父传子
+    const cpn = {
+        template: '#cpn',
+        methods: {
+            showMessage() {
+                console.log('子组件输出')
+            }
+        },
+        components: {
+            ccpn: {
+                template: '#ccpn',
+                methods: {
+                    ccpnClick() {
+                        // 1访问父组件的$parent
+                        console.log(this.$parent.name)
+                        // 2访问根组件的$root
+                        console.log(this.$root.message)
+                    }
+                }
+            }
+        },
+        data() {
+            return {
+                name: 'cpn组件的name',
+            }
+        }
+    }
+    const app = new Vue({
+        el: '#app',
+        data: {
+            students: '320170940845,刘绪俭5,320170940846,刘绪俭6',
+            movies: ['电影1', '电影2', '电影3'],
+            message: '你好呀',
+            firstName: 'kobe',
+            lastName: 'bryant',
+            counter: 100,
+            url: '<a href="http://www.baidu.com">百度一下</a>',
+            isActive: true,
+            isLine: true,
+            class1: 'aaaa',
+            class2: 'bbbb',
+            finalSize: 100,
+            finalColor: 'red',
+            baseStyle: { background: 'red' },
+            baseStyle1: { fontSize: '100px' },
+            books: [
+                { id: 110, name: '书籍1', price: 119 },
+                { id: 111, name: '书籍2', price: 21 },
+                { id: 112, name: '书籍3', price: 22 },
+                { id: 113, name: '书籍3', price: 45 },
+            ],
+            isShow: true,
+            names: [ 'name1', 'name2', 'name3' ],
+            age: 0,
+            num1: 0,
+            num2: 1
+        },
+        computed: {
+            myNames() {
+                return this.students.split(',')
+            },
+            // 计算属性一般没有setter方法，只读属性
+            fullName: {
+              set: function (newValue) {
+                  const names = newValue.split(' ')
+                  this.firstName = names[0]
+                  this.lastName = names[1]
+              },
+                get: function () {
+                  return this.firstName + ' ' +this.lastName
+                }
+            },
+            totalPrice: function () {
+                let result = 0
+                for (let i = 0; i < this.books.length; i++) {
+                    result += this.books[i].price
+                }
+                return result
+            }
+            },
+        // 语法糖的写法
+        components: {
+            cpn: cpn
+        },
+        methods: {
+            valueChange (event) {
+              this.message = event.target.value
+            },
+            btnClick: function () {
+              this.isActive = !this.isActive
+            },
+            getClasses: function () {
+                return {active: this.isActive, line: this.isLine}
+            },
+            getStyles: function () {
+                return {fontSize: this.finalSize + 'px', background: this.finalColor}
+            },
+            clickBtn2 () {
+                // 1.push方法
+                // this.names.push('aaaa')
+                // 2.pop删除数组最后一个元素
+                // this.names.pop()
+                // 3.shift删除数组中第一个元素
+                // this.names.shift()
+                // 4.unshift在数组最前面添加元素
+                // this.names.unshift('aaaaa', 'bbbbbb')
+                // 5. splice:删除元素/插入元素/替换元素
+                // 删除元素：第一个参数位置，第二个参数删除几个元素
+                // 替换元素：第二个参数表示替换几个元素，后面为替换的元素
+                // 插入元素：第二个参数传入0，后面为替换的元素
+                // this.names.splice(1,2)
+                // this.names.splice(1,2, 'aaaaa', 'bbbbb')
+                // this.names.splice(1,0, 'ccc', 'dddd')
+                // 6.sort
+                // this.names.sort()
+                // 7 reverse
+                // this.names.reverse()
+                // 注意通过索引值修改数组元素的值，不是响应式的
+                // this.names[0] = 'cccccc'
+                // this.names.splice(0, 1, 'bbbbbbb')
+                // set（需要修改的对象， 索引值，修改值)
+                Vue.set(this.names, 0, 'ffffffff')
+
+            },
+            myclick(){
+                console.log(this.$refs);
+                this.$refs.aaa.showMessage()
+            }
+        }
+    })
+</script>
+</html>
